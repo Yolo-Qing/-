@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生成绩管理</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", sans-serif;
+        }
+         body {
+            background: linear-gradient(135deg, #e0f7fa, #f0f9ff);
+            padding: 30px;
+        }
+         .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 18px rgba(0, 100, 150, 0.12);
+        }
+        h1 {
+            text-align: center;
+            color: #0277bd;
+            margin-bottom: 30px;
+            font-size: 26px;
+            letter-spacing: 2px;
+        }
+         .form-box {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+         input {
+            padding: 12px 14px;
+            border: 1px solid #b2ebf2;
+            border-radius: 8px;
+            flex: 1;
+            min-width: 130px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+        input:focus {
+            outline: none;
+            border-color: #0288d1;
+            box-shadow: 0 0 0 3px rgba(2, 136, 209, 0.15);
+        }
+         button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.25s ease;
+        }
+        #addBtn {
+            background-color: #0288d1;
+            color: white;
+        }
+        #addBtn:hover {
+            background-color: #0277bd;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(2, 136, 209, 0.3);
+        }
+        .del-btn {
+            background-color: #e53935;
+            color: white;
+        }
+         .del-btn:hover {
+            background-color: #c62828;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(229, 57, 53, 0.3);
+        }
+         table {
+            width: 100%;
+            border-collapse: collapse; /* 合并边框 */
+        }
+         th, td {
+            border: 1px solid #e0f2f1;
+            padding: 14px;
+            text-align: center;
+        }
+        th {
+            background-color: #0288d1;
+            color: white;
+            font-weight: normal;
+        }
+        tr:nth-child(even) {
+            background-color: #f4fcff;
+        }
+         tr:hover {
+            background-color: #e1f5fe;
+        }
+    </style>
+</head>
+<body>
+     <div class="container">
+        <!-- 页面标题 -->
+        <h1>学生成绩管理系统</h1>
+
+        <!-- 添加学生表单区域 -->
+        <div class="form-box">
+            <input type="text" id="stuId" placeholder="请输入学号">
+            <input type="text" id="stuName" placeholder="请输入姓名">
+            <input type="number" id="stuScore" placeholder="请输入成绩">
+            <button id="addBtn">添加学生</button>
+        </div>
+
+        <!-- 学生表格 -->
+        <table>
+            <thead>
+                <tr>
+                    <th>学号</th>
+                    <th>姓名</th>
+                    <th>成绩</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <!-- 表格内容由JS动态生成 -->
+            <tbody id="tableBody">
+
+            </tbody>
+        </table>
+    </div>
+
+
+    <script>
+        let studentList = [
+            // 预置2条测试数据
+            { id: "2026001", name: "张三", score: 88 },
+            { id: "2026002", name: "李四", score: 92 }
+        ];
+        const tableBody = document.getElementById("tableBody");
+        const addBtn = document.getElementById("addBtn");
+        const stuIdInput = document.getElementById("stuId");
+        const stuNameInput = document.getElementById("stuName");
+        const stuScoreInput = document.getElementById("stuScore");
+        function renderTable() {
+            tableBody.innerHTML = "";
+
+            studentList.forEach(function (stu, index) {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${stu.id}</td>
+                    <td>${stu.name}</td>
+                    <td>${stu.score}</td>
+                    <td><button class="del-btn" data-index="${index}">删除</button></td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        addBtn.onclick = function () {
+            const id = stuIdInput.value.trim();
+            const name = stuNameInput.value.trim();
+            const score = stuScoreInput.value.trim();
+
+            if (!id || !name || !score) {
+                alert("学号、姓名、成绩不能为空！");
+                return;
+            }
+
+            if (isNaN(score) || score < 0 || score > 100) {
+                alert("成绩必须是0~100之间的数字！");
+                return;
+            }
+
+            const newStu = {
+                id: id,
+                name: name,
+                score: Number(score)
+            };
+            studentList.push(newStu);
+
+            renderTable();
+
+            stuIdInput.value = "";
+            stuNameInput.value = "";
+            stuScoreInput.value = "";
+        };
+
+
+        tableBody.onclick = function (e) {
+            if (e.target.classList.contains("del-btn")) {
+                const idx = e.target.dataset.index;
+                studentList.splice(idx, 1);
+                renderTable();
+            }
+        };
+
+
+        renderTable();
+    </script>
+</body>
+</html>
